@@ -159,3 +159,8 @@ iiii. Log likelihood of loss.
         optimizer.step()
         total_loss += loss.item()
 ```
+
+###Saving
+
+After training, we need to combine the word embedding matrix and context
+embedding matrix as the final pretrained vectors.
