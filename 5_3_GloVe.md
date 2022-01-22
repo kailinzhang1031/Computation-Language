@@ -1,4 +1,4 @@
-# 5.3 Glove
+# 5.3 GloVe
 
 ## 0. Introduction
 
@@ -62,6 +62,7 @@ Despite for original data, we need to consider the **offset vector**.
 ```
 
 ### (2) Forward Function ###
+
 Here we define 2 forward functions to return embedding vector and offset vector of word and context respectively.
 
 ```python
@@ -97,19 +98,20 @@ We can also use ```count+1``` to smooth if necessary.
         log_counts = torch.log(counts)
 ```
 
-### （3） Weight of samples
+### （3） Calculate weights of samples
 ```python
 weight_factor = torch.clamp(torch.pow(counts / m_max, alpha), max=1.0)
 ```
 
 ### (4) Calculate L2-Loss of every sample in a batch
-This statement is corresponding to the loss formula of GloVe.
+This statement is corresponding to the **loss formula** of GloVe.
 
 ```python
 loss = (torch.sum(word_embeds * context_embeds, dim=1) + word_biases + context_biases - log_counts) ** 2
 ```
 
 ### (5) Calculate the weighted loss of every sample
+
 ```python
 wavg_loss = (weight_factor * loss).mean()
 ```
