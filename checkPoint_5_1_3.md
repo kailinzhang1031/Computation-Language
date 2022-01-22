@@ -91,7 +91,7 @@ Note that: Instantiation of DataLoader **do not** implicitly call ```collate_fn`
 
 #### 1. Input
 
-batch_size defines number of samples that will be propagated through the network.
+batch_size defines number of samples that will be propagated through the network.</sup>**[1]**</sup>
 
 i.e. when batch_size = 1, in an epoch,
 
@@ -144,5 +144,6 @@ Here "Save pretrained token vectors in a unified format, where the first line
 specifies the `number_of_tokens` and `embedding_dim` followed with all
 token vectors, one token per line." (From source code)
 
+**[1]** itdxer (https://stats.stackexchange.com/users/64943/itdxer), What is batch size in neural network?, URL (version: 2019-04-05): https://stats.stackexchange.com/q/153535
 
 
