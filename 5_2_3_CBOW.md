@@ -160,7 +160,7 @@ iiii. Log likelihood of loss.
         total_loss += loss.item()
 ```
 
-###Saving
+### Saving
 
 After training, we need to combine the word embedding matrix and context
 embedding matrix as the final pretrained vectors.
