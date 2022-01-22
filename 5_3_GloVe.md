@@ -114,7 +114,8 @@ loss = (torch.sum(word_embeds * context_embeds, dim=1) + word_biases + context_b
 wavg_loss = (weight_factor * loss).mean()
 ```
 
-
+# 4. Reference
+[1] https://nlp.stanford.edu/projects/glove/
 
 
 
