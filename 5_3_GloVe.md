@@ -8,7 +8,7 @@ Glove is also based on word-context representation.
 
 ## 1. Dataset Subclass ##
 
-### Constructor ###
+### (1) Constructor ###
 
 #### Instance Attributes Setting ####
 
@@ -20,7 +20,7 @@ We first initialize 3 basic attributes:
 ```
 ```self.cooccur_counts``` records the coocurence time of a pair of (word, context) in given corpus.
 
-#### Statements ####
+#### (2) Statements ####
 
 ```python
                 w = sentence[i]
