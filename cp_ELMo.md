@@ -4,7 +4,7 @@
 
 ## (1) Data Distribution
 
-As a case study, we choose 300 sentences in NLTK.reuters as original data.
+As a case study, we choose 1-3 sentence(s) in NLTK.reuters as original data.
 
 ## (2) Dataset Construction
 
