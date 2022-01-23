@@ -96,7 +96,7 @@ When building character-level dictionary, we instantiate it as:
 ```python
 vocab_c = Vocab(tokens=list(charset))
 ```
-The instantiation will only call the constructor.
+**The instantiation will only call the constructor.**
 
 Word-level vocabulary```vocab_w```
 
