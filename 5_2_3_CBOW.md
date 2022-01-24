@@ -1,7 +1,5 @@
 # CheckPoint 5.2.3 CBOW
 
-Yes!
-
 # 0. Introduction
 In this section, we will show the implementation of **CBOW** and **Skip-Gram** based
 on Pytorch.
