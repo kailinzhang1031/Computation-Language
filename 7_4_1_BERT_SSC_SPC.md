@@ -2,8 +2,9 @@
 
 # 0. Introduction
 
-Here we will introduce several applications on BERT. Regarding that BERT requires high
-computability, which is hard for laptops, we only introduce processes like data preprocessing,
+Here we will introduce several applications on BERT. 
+
+Regarding that BERT requires highcomputability, which is hard for laptops, we will only introduce processes like data preprocessing,
 dataset construction, code interpretation, and other necessary work, except for detailed
 training process and analysis.
 
