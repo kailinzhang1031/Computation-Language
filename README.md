@@ -21,10 +21,11 @@ All codes are accessible in the repository [HIT-SCIR/plm-nlp-code](https://githu
 - [GloVE](https://github.com/kailinzhang1031/Computation-Language/blob/main/5_3_GloVe.md)
 - [ELMo](https://github.com/kailinzhang1031/Computation-Language/blob/main/6_2_3_ELMo.md)
 
-### 1.3 Practical Task
-- [Data Preprocessing-HuggingFace]()
+#### 1.3 Basic Task
+- [Data Preprocessing-Hugging Face]()
 - [Data Preprocessing-Pytorch]()
 - [Motion Analysis: A case study]()
+- [Negative Sampling: A case study]()
 
 
 ### 2. Hugging Face
