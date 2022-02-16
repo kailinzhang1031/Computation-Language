@@ -128,7 +128,6 @@ def collate_fn(examples):
     lengths = torch.tensor([len(ex[0]) for ex in examples])
     inputs = [torch.tensor(ex[0]) for ex in examples]
     targets = torch.tensor([ex[1] for ex in examples], dtype=torch.long)
-    # 对batch内的样本进行padding，使其具有相同长度
     inputs = pad_sequence(inputs, batch_first=True)
     return inputs, lengths, targets
 ```
