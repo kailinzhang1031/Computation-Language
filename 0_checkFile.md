@@ -128,6 +128,7 @@ def collate_fn(examples):
     lengths = torch.tensor([len(ex[0]) for ex in examples])
     inputs = [torch.tensor(ex[0]) for ex in examples]
     targets = torch.tensor([ex[1] for ex in examples], dtype=torch.long)
+    # 对batch内的样本进行padding，使其具有相同长度
     inputs = pad_sequence(inputs, batch_first=True)
     return inputs, lengths, targets
 ```
@@ -306,6 +307,44 @@ print(f"Acc: {acc / len(test_data_loader):.2f}")
 Output accuracy on the test dataset. 
 
 ### 3.2 Analysis
+
+
+
+When testing, the test_dataloader generates a tuple of (inputs,targets) every loop.
+An ```input``` is a tensor in the length of corresponding sentence.
+A ```target``` is a tensor in the size of torch.Size([1]), which suggests the **predicted class**.
+
+
+We set batch_size of test dataloader as 1.
+The loop goes for 2662 times, which contains 1331 samples with class of "positive",
+, and 1331 samples with class of negative. 
+
+Variable ```offsets``` may be relevant to possible mistake, for we do not use **collect function**
+as in CNN.
+
+The average accuracy is 0.62.
+
+Negative samples as showed as following:
+
+| index | batch | input (to tokens) | target | output_argmax |
+| :--: | :--: | :--: | :--: | :--: |
+| 0 | 1 |  [allen] manages to breathe life into this somewhat tired premise . | 0 | 1 |
+| 1 | 1 | i have two words to say about reign of fire . great dragons ! | 0 | 1 |
+| 2 | 1 |  more vaudeville show than well-constructed narrative , but on those terms it's inoffensive and actually rather sweet . | 0 | 1 |
+| 385 | 1 | an entertainment so in love with its overinflated mythology that it no longer recognizes the needs of moviegoers for real characters and compelling plots . | 1 | 0 |
+| 386 | 1 | borrows from other movies like it in the most ordinary and obvious fashion .  | 1 | 0 |
+| 387 | 1 | a chilly , remote , emotionally distant piece . . . so dull that its tagline should be : 'in space , no one can hear you snore . '  | 1 | 0 |
+
+This shows when encoding sentence with word bags, the network only consider the word information, regardless of context information.
+
+## 4.1 Sentiment Classification Based On CNN
+
+```python
+
+
+```
+
+
 
 
 
