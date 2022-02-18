@@ -308,8 +308,6 @@ Output accuracy on the test dataset.
 
 ### 3.2 Analysis
 
-
-
 When testing, the test_dataloader generates a tuple of (inputs,targets) every loop.
 An ```input``` is a tensor in the length of corresponding sentence.
 A ```target``` is a tensor in the size of torch.Size([1]), which suggests the **predicted class**.
@@ -322,6 +320,7 @@ The loop goes for 2662 times, which contains 1331 samples with class of "positiv
 Variable ```offsets``` may be relevant to possible mistake, for we do not use **collect function**
 as in CNN.
 
+H
 The average accuracy is 0.62.
 
 Negative samples as showed as following:
@@ -337,12 +336,136 @@ Negative samples as showed as following:
 
 This shows when encoding sentence with word bags, the network only consider the word information, regardless of context information.
 
-## 4.1 Sentiment Classification Based On CNN
+## 4. Sentiment Classification Based On CNN
+### 4.1 Code
+
+#### 4.1.1 Class
+```python
+class CNN(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, filter_size, num_filter, num_class):
+        super(CNN, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.conv1d = nn.Conv1d(embedding_dim, num_filter, filter_size, padding=1)
+        self.activate = F.relu
+        self.linear = nn.Linear(num_filter, num_class)
+    def forward(self, inputs):
+        embedding = self.embedding(inputs)
+        convolution = self.activate(self.conv1d(embedding.permute(0, 2, 1)))
+        pooling = F.max_pool1d(convolution, kernel_size=convolution.shape[2])
+        outputs = self.linear(pooling.squeeze(dim=2))
+        log_probs = F.log_softmax(outputs, dim=1)
+        return log_probs
+```
+
+#### 4.1.2 Collect Function
+```python
+def collate_fn(examples):
+    inputs = [torch.tensor(ex[0]) for ex in examples]
+    targets = torch.tensor([ex[1] for ex in examples], dtype=torch.long)
+    inputs = pad_sequence(inputs, batch_first=True)
+    return inputs, targets
+```
+
+#### 4.1.3 Hyper Parameter
+```python
+filter_size = 3
+num_filter = 100
+```
+
+### 4.2 Analysis
+
+## 5. Sentiment Classification Based On RNN
+
+### 5.1 Code
+
+#### 5.1.1 Collect Function
 
 ```python
+def collate_fn(examples):
+    lengths = torch.tensor([len(ex[0]) for ex in examples])
+    inputs = [torch.tensor(ex[0]) for ex in examples]
+    targets = torch.tensor([ex[1] for ex in examples], dtype=torch.long)
 
-
+    inputs = pad_sequence(inputs, batch_first=True)
+    return inputs, lengths, targets
 ```
+
+#### 5.1.2 Class
+```python
+class LSTM(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, hidden_dim, num_class):
+        super(LSTM, self).__init__()
+        self.embeddings = nn.Embedding(vocab_size, embedding_dim)
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, batch_first=True)
+        self.output = nn.Linear(hidden_dim, num_class)
+
+    def forward(self, inputs, lengths):
+        embeddings = self.embeddings(inputs)
+        x_pack = pack_padded_sequence(embeddings, lengths, batch_first=True, enforce_sorted=False)
+        hidden, (hn, cn) = self.lstm(x_pack)
+        outputs = self.output(hn[-1])
+        log_probs = F.log_softmax(outputs, dim=-1)
+        return log_probs
+```
+
+### 5.2 Analysis
+
+
+## 6. Sentiment Classification Based On Transformer
+
+### 6.1 Code
+
+#### 6.1.1 Encoding
+
+```python
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, dropout=0.1, max_len=512):
+        super(PositionalEncoding, self).__init__()
+
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0).transpose(0, 1)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        x = x + self.pe[:x.size(0), :]
+        return x
+```
+
+#### 6.1.2 Class
+
+```python
+class Transformer(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, hidden_dim, num_class,
+                 dim_feedforward=512, num_head=2, num_layers=2, dropout=0.1, max_len=128, activation: str = "relu"):
+        super(Transformer, self).__init__()
+        # Word Embedding Layer
+        self.embedding_dim = embedding_dim
+        self.embeddings = nn.Embedding(vocab_size, embedding_dim)
+        self.position_embedding = PositionalEncoding(embedding_dim, dropout, max_len)
+        # Encoding Layer: Using Transformer
+        encoder_layer = nn.TransformerEncoderLayer(hidden_dim, num_head, dim_feedforward, dropout, activation)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers)
+        # Output Layer
+        self.output = nn.Linear(hidden_dim, num_class)
+
+
+    def forward(self, inputs, lengths):
+        inputs = torch.transpose(inputs, 0, 1)
+        hidden_states = self.embeddings(inputs)
+        hidden_states = self.position_embedding(hidden_states)
+        attention_mask = length_to_mask(lengths) == False
+        hidden_states = self.transformer(hidden_states, src_key_padding_mask=attention_mask)
+        hidden_states = hidden_states[0, :, :]
+        output = self.output(hidden_states)
+        log_probs = F.log_softmax(output, dim=1)
+        return log_probs
+```
+
+### 6.2 Analysis
 
 
 
