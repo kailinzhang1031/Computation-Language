@@ -143,6 +143,7 @@ and the wholes tokens are taken into account.
 ## 3.4 Data Flow
 
 | Variable | Description | Size |
+| :--: | :--: | :--: |
 | inputs | input sentences in a batch | torch.Size([batch size,max length of sentence in a batch]) |
 | length | length of every sentence in a batch | torch.Size([batch size]) |
 | targets | targets of sentences in a batch | torch.Size(batch size,max length of sentence in a batch) |
